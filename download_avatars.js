@@ -1,27 +1,47 @@
 var request = require('request');
-var secrets = require('./secrets')
+var secrets = require('./secrets');
+var fs = require('fs');
+
 
 console.log('Welcome to the GitHub Avatar Downloader!');
-function getRepoContributors(repoOwner, repoName, cb) {
-  var options = {
-    url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
-    headers: {
-      'User-Agent': 'request',
-      'Authorization' : secrets.GITHUB_TOKEN
-    }
-  };
+// function getRepoContributors(repoOwner, repoName, cb) {
+//   var options = {
+//     url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
+//     headers: {
+//       'User-Agent': 'request',
+//       'Authorization' : 'token ' + secrets.GITHUB_TOKEN
+//     }
+//   };
 
-  request(options, function(err, res, body) {
-    cb(err, body);
-  });
+//   request(options, function(err, res, body) {
+//     cb(err, body);
+//   });
+// }
+
+// getRepoContributors("jquery", "jquery", function(err, result) {
+//  var stringed = JSON.parse(result);
+//  console.log(result);
+//  stringed.forEach(function(obj) {
+//  	console.log("Result:" + obj.avatar_url)
+//  });
+
+
+function downloadImageByURL(url, filePath) {
+  request.get(url, filePath)
+  .on('error', function (err) {                                   // Note 2
+         throw err; 
+       })
+       .on('response', function (response) {                           // Note 3
+         console.log('Response Status Code: ', response.statusCode);
+         console.log('Headers: ', response.headers['content-type']);
+         console.log('Downloading image...');
+         console.log('Download complete.');
+       })
+       .pipe(fs.createWriteStream('./avatar.jpg'));               // Note 4
+
 }
-
-getRepoContributors("jquery", "jquery", function(err, result) {
- var stringed = JSON.parse(result);
- stringed.forEach(function(obj) {
- 	//console.log(obj);
- 	console.log("Result:" + obj.avatar_url);
- })
  // console.log("Errors:", err);
   //console.log("Result:", result);
-});
+//})
+
+downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "avatars/kvirani.jpg");
