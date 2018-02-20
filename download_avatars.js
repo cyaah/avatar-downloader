@@ -19,13 +19,19 @@ console.log('Welcome to the GitHub Avatar Downloader!');
    });
  }
 
-getRepoContributors("jquery", "jquery", function(err, result) {
+getRepoContributors(process.argv[2], process.argv[3], function(err, result) {
+	if(process.argv[2] === undefined || process.argv[3] === undefined){
+		console.log("Error1");
+	}
+	else{
   var stringed = JSON.parse(result);
 //  console.log(result);
   stringed.forEach(function(obj) {
   	downloadImageByURL(obj.avatar_url, obj.id )
 
   });
+}
+
 
 
 function downloadImageByURL(url, filePath) {
